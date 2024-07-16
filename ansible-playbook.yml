@@ -48,6 +48,22 @@
         state: file
       become: yes
 
+    - name: Install crictl
+      get_url:
+        url: https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.23.0/crictl-v1.23.0-linux-amd64.tar.gz
+        dest: /tmp/crictl.tar.gz
+        mode: '0644'
+      become: yes
+
+    - name: Extract crictl binary
+      unarchive:
+        src: /tmp/crictl.tar.gz
+        dest: /usr/local/bin
+        remote_src: yes
+        creates: /usr/local/bin/crictl
+        mode: '0755'
+      become: yes
+
     - name: Start Minikube Cluster
       command: /usr/local/bin/minikube start --driver=none
       environment:
