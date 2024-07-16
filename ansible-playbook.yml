@@ -43,7 +43,7 @@
       become: yes
 
     - name: Start Minikube Cluster
-      command: /usr/local/bin/minikube start
+      command: /usr/local/bin/minikube start --driver=none
       environment:
         HOME: "/ec2-user"
       become: yes
