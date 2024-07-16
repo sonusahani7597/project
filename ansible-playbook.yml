@@ -28,11 +28,11 @@
         mode: '0755'
       become: yes
 
-   - name: Install conntrack
-      become: yes
+    - name: Install conntrack
       yum:
         name: conntrack-tools
         state: present
+      become: yes
 
     - name: Download Minikube
       get_url:
