@@ -21,19 +21,18 @@
         state: started
       become: yes
 
-    - name: Install kubectl
-      command: >
-        curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.17.9/2020-07-23/bin/linux/amd64/kubectl &&
-        chmod +x kubectl &&
-        mv kubectl /usr/local/bin/
-      args:
-        creates: /usr/local/bin/kubectl
+    - name: Download kubectl
+      get_url:
+        url: https://amazon-eks.s3-us-west-2.amazonaws.com/1.17.9/2020-07-23/bin/linux/amd64/kubectl
+        dest: /usr/local/bin/kubectl
+        mode: '0755'
       become: yes
 
-    - name: Install Minikube
-      command: curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
-      args:
-        creates: /usr/local/bin/minikube
+    - name: Download Minikube
+      get_url:
+        url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+        dest: /usr/local/bin/minikube
+        mode: '0755'
       become: yes
 
     - name: Start Minikube Cluster
