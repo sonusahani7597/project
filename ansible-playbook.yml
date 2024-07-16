@@ -35,12 +35,19 @@
         mode: '0755'
       become: yes
 
+    - name: Ensure Minikube binary is executable
+      file:
+        path: /usr/local/bin/minikube
+        mode: '0755'
+        state: file
+      become: yes
+
     - name: Start Minikube Cluster
-      command: minikube start
+      command: /usr/local/bin/minikube start
       environment:
         HOME: "/root"
       become: yes
 
     - name: Apply Kubernetes Deployment
-      command: kubectl apply -f deployment.yml
+      command: /usr/local/bin/kubectl apply -f deployment.yml
       become: yes
