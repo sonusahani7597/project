@@ -21,6 +21,18 @@
         state: started
       become: yes
 
+    - name: Create a non-root user
+      user:
+        name: minikubeuser
+        state: present
+        createhome: yes
+
+    - name: Add minikubeuser to docker group
+      user:
+        name: minikubeuser
+        groups: docker
+        append: yes
+
     - name: Download kubectl
       get_url:
         url: https://dl.k8s.io/release/v1.21.0/bin/linux/amd64/kubectl
@@ -42,16 +54,16 @@
         state: file
       become: yes
 
-    - name: Start Minikube Cluster with none driver
+    - name: Switch to minikubeuser to start Minikube
       become: false
-      command: minikube start --driver=none
+      become_user: minikubeuser
       environment:
-        HOME: "/home/ec2-user"
-      become_user: ec2-user
+        HOME: "/home/minikubeuser"
+      command: /usr/local/bin/minikube start --driver=docker
 
     - name: Apply Kubernetes Deployment
       become: false
-      command: kubectl apply -f deployment.yml
+      become_user: minikubeuser
       environment:
-        HOME: "/home/ec2-user"
-      become_user: ec2-user
+        HOME: "/home/minikubeuser"
+      command: /usr/local/bin/kubectl apply -f deployment.yml
