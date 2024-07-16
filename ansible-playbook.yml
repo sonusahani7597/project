@@ -1,20 +1,36 @@
-- name : Configure Docker on EC2 Instances
-  hosts : localhost
+- name: Configure Minikube on EC2 Instances
+  hosts: localhost
   become: true
-  connection : local
-  tasks : 
-  - name: updating yum
-    command : sudo yum update -y
+  connection: local
+  tasks:
+    - name: Install necessary packages for Minikube
+      yum:
+        name:
+          - docker
+          - kubectl
+          - conntrack
+          - socat
+        state: present
+      become: yes
 
-  - name : Install Docker
-    command : sudo yum install -y docker
-    become : yes
-    become_user : root
+    - name: Start Docker Service
+      service:
+        name: docker
+        state: started
+      become: yes
 
-  - name : Start Docker Service
-    command : sudo systemctl start docker
-    become : yes
-    become_user : root
+    - name: Install Minikube
+      command: curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+      args:
+        creates: /usr/local/bin/minikube
+      become: yes
 
-  - name: Deploy Docker Container
-    command: docker run -itd -p 8084:8082 --name app-container sonusahani/healthcare-app
+    - name: Start Minikube Cluster
+      command: minikube start
+      environment:
+        HOME: "/root"
+      become: yes
+
+    - name: Apply Kubernetes Deployment
+      command: kubectl apply -f deployment.yml
+      become: yes
