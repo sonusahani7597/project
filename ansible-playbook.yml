@@ -42,12 +42,16 @@
         state: file
       become: yes
 
-    - name: Start Minikube Cluster
-      command: /usr/local/bin/minikube start
+    - name: Start Minikube Cluster with none driver
+      become: false
+      command: minikube start --driver=none
       environment:
-        HOME: "/root"
-      become: yes
+        HOME: "/home/ec2-user"
+      become_user: ec2-user
 
     - name: Apply Kubernetes Deployment
-      command: /usr/local/bin/kubectl apply -f deployment.yml
-      become: yes
+      become: false
+      command: kubectl apply -f deployment.yml
+      environment:
+        HOME: "/home/ec2-user"
+      become_user: ec2-user
