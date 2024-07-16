@@ -28,6 +28,12 @@
         mode: '0755'
       become: yes
 
+   - name: Install conntrack
+      become: yes
+      yum:
+        name: conntrack-tools
+        state: present
+
     - name: Download Minikube
       get_url:
         url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
