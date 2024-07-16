@@ -16,6 +16,6 @@ spec:
         - name: healthcare-app
           image: sonusahani/healthcare-app:latest
           ports:
-            - containerPort: 8084
+            - containerPort: 8082
 
 
