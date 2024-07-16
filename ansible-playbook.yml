@@ -21,34 +21,6 @@
         state: started
       become: yes
 
-    - name: Create a non-root user
-      user:
-        name: minikubeuser
-        state: present
-        createhome: yes
-
-    - name: Add minikubeuser to docker group
-      user:
-        name: minikubeuser
-        groups: docker
-        append: yes
-
-    - name: Ensure minikubeuser can write to its home directory
-      file:
-        path: /home/minikubeuser
-        state: directory
-        owner: minikubeuser
-        group: minikubeuser
-        mode: '0755'
-
-    - name: Ensure minikubeuser can create .minikube directory
-      file:
-        path: /home/minikubeuser/.minikube
-        state: directory
-        owner: minikubeuser
-        group: minikubeuser
-        mode: '0755'
-
     - name: Download kubectl
       get_url:
         url: https://dl.k8s.io/release/v1.21.0/bin/linux/amd64/kubectl
@@ -70,25 +42,12 @@
         state: file
       become: yes
 
-    - name: Change ownership of .minikube directory
-      file:
-        path: /home/minikubeuser/.minikube
-        state: directory
-        owner: minikubeuser
-        group: minikubeuser
-        recurse: yes
+    - name: Start Minikube Cluster
+      command: /usr/local/bin/minikube start
+      environment:
+        HOME: "/ec2-user"
       become: yes
 
-    - name: Switch to minikubeuser to start Minikube
-      become: false
-      become_user: minikubeuser
-      environment:
-        HOME: "/home/minikubeuser"
-      command: /usr/local/bin/minikube start --driver=docker
-
     - name: Apply Kubernetes Deployment
-      become: false
-      become_user: minikubeuser
-      environment:
-        HOME: "/home/minikubeuser"
-      command: /usr/local/bin/kubectl apply -f deployment.yml
+      command: /usr/local/bin/kubectl apply -f /path/to/deployment.yaml
+      become: yes
