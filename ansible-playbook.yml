@@ -70,6 +70,15 @@
         state: file
       become: yes
 
+    - name: Change ownership of .minikube directory
+      file:
+        path: /home/minikubeuser/.minikube
+        state: directory
+        owner: minikubeuser
+        group: minikubeuser
+        recurse: yes
+      become: yes
+
     - name: Switch to minikubeuser to start Minikube
       become: false
       become_user: minikubeuser
