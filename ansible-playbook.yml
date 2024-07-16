@@ -65,11 +65,11 @@
       become: yes
 
     - name: Start Minikube Cluster
-      command: /usr/local/bin/minikube start --driver=none
+      command: /usr/local/bin/minikube start --driver=none --extra-config=kubeadm.ignore-preflight-errors=SystemVerification
       environment:
         HOME: "/ec2-user"
       become: yes
 
     - name: Apply Kubernetes Deployment
-      command: /usr/local/bin/kubectl apply -f /path/to/deployment.yaml
+      command: /usr/local/bin/kubectl apply -f deployment.yml
       become: yes
