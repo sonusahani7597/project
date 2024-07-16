@@ -33,6 +33,22 @@
         groups: docker
         append: yes
 
+    - name: Ensure minikubeuser can write to its home directory
+      file:
+        path: /home/minikubeuser
+        state: directory
+        owner: minikubeuser
+        group: minikubeuser
+        mode: '0755'
+
+    - name: Ensure minikubeuser can create .minikube directory
+      file:
+        path: /home/minikubeuser/.minikube
+        state: directory
+        owner: minikubeuser
+        group: minikubeuser
+        mode: '0755'
+
     - name: Download kubectl
       get_url:
         url: https://dl.k8s.io/release/v1.21.0/bin/linux/amd64/kubectl
