@@ -1,53 +1,20 @@
-- name: Configure Minikube on EC2 Instances
-  hosts: localhost
+- name : Configure Docker on EC2 Instances
+  hosts : all
   become: true
-  connection: local
-  tasks:
-    - name: Update all packages to the latest version
-      yum:
-        name: '*'
-        state: latest
-        update_cache: yes
+  connection : ssh
+  tasks : 
+  - name: updating apt
+    command : sudo apt-get update
 
-    - name: Install Docker
-      yum:
-        name: docker
-        state: present
-      become: yes
+  - name : Install Docker
+    command : sudo apt-get install -y docker.io
+    become : yes
+    become_user : root
 
-    - name: Start Docker Service
-      service:
-        name: docker
-        state: started
-      become: yes
+  - name : Start Docker Service
+    command : sudo systemctl start docker
+    become : yes
+    become_user : root
 
-    - name: Download kubectl
-      get_url:
-        url: https://dl.k8s.io/release/v1.21.0/bin/linux/amd64/kubectl
-        dest: /usr/local/bin/kubectl
-        mode: '0755'
-      become: yes
-
-    - name: Install conntrack
-      yum:
-        name: conntrack-tools
-        state: present
-      become: yes
-
-    - name: Download Minikube
-      get_url:
-        url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-        dest: /usr/local/bin/minikube
-        mode: '0755'
-      become: yes
-
-    - name: Ensure Minikube binary is executable
-      file:
-        path: /usr/local/bin/minikube
-        mode: '0755'
-        state: file
-      become: yes
-
-    - name: Apply Kubernetes Deployment
-      command: /usr/local/bin/kubectl apply -f deployment.yml
-      become: yes
+  - name: Deploy Docker Container
+    command: docker run -itd -p 8084:8082 shubhamkushwah123/medicure:1.0
